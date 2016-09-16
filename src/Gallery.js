@@ -1,5 +1,6 @@
 import React from 'react';
 import Photo from './Photo';
+import AddUserForm from './AddUserForm';
  
 class Gallery extends React.Component {
   renderImage(imageUrl) {
@@ -13,7 +14,8 @@ class Gallery extends React.Component {
   render() {
     return (
       <div className="gallery">
-        <div className="images">
+	  <AddUserForm />
+	  <div className="images">
           {this.props.imageUrls.map(imageUrl => this.renderImage(imageUrl))}
         </div>
       </div>
