@@ -2,30 +2,29 @@ var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
 
 var db = new sqlite3.Database('instagramma.db');
-
+var exists = fs.existsSync('.\instagramma.db');
 exports.deleteDB=deleteDB;
 exports.deleteDBContents=deleteDBContents;
 
 function deleteDB(db)
 {
-        db.run("DROP TABLE users", function (err) { if (err) { } });
-        db.run("DROP TABLE images", function (err) { if (err) { } });
-        db.run("DROP TABLE imageLike", function (err) { if (err) { } }); //x
-        db.run("DROP TABLE imageComments", function (err) { if (err) { } }); //x
+    db.run("DROP TABLE users", function (err) { if (err) { } });
+    db.run("DROP TABLE images", function (err) { if (err) { } });
+    db.run("DROP TABLE imageLike", function (err) { if (err) { } }); //x
+    db.run("DROP TABLE imageComments", function (err) { if (err) { } }); //x
 }
 function deleteDBContents()
 {
-        db.run("DELETE from imageLike", function (err) { if (err) { } }); //x
-        db.run("DELETE from imageComments", function (err) { if (err) { } }); //x
-        db.run("DELETE from images", function (err) { if (err) { } });
-        db.run("DELETE from users", function (err) { if (err) { } });
+    db.run("DELETE from imageLike", function (err) { if (err) { } }); //x
+    db.run("DELETE from imageComments", function (err) { if (err) { } }); //x
+    db.run("DELETE from images", function (err) { if (err) { } });
+    db.run("DELETE from users", function (err) { if (err) { } });
 }
 function initDB(db) {
-    if (fs.existsSync('instagramma.db')) return;
 
     db.serialize(function () {
         console.log("create users table");
-        db.run("CREATE TABLE users IF NOT EXISTS \
+        db.run("CREATE TABLE IF NOT EXISTS users \
         (USER_PK INTEGER PRIMARY KEY NOT NULL, \
         UNAME TEXT UNIQUE NOT NULL, \
         NAME TEXT NOT NULL, \
@@ -34,7 +33,7 @@ function initDB(db) {
     });
     db.serialize(function () {
         console.log("create images table");
-        db.run("CREATE TABLE images IF NOT EXISTS \
+        db.run("CREATE TABLE IF NOT EXISTS images \
         (IMAGE_PK INTEGER PRIMARY KEY NOT NULL, \
         IMAGE_TITLE TEXT, \
         IMAGEBYTES BLOBL, \
@@ -44,7 +43,7 @@ function initDB(db) {
     });
     db.serialize(function () {
         console.log("create imageLike table");
-        db.run("CREATE TABLE imageLike IF NOT EXISTS \
+        db.run("CREATE TABLE IF NOT EXISTS imageLike \
         (LIKE_PK INTEGER PRIMARY KEY NOT NULL, \
         USER_FK INTEGER, \
         IMAGE_FK INTEGER,\
@@ -54,7 +53,7 @@ function initDB(db) {
     });
     db.serialize(function () {
         console.log("create imageComments table");
-        db.run("CREATE TABLE imageComments IF NOT EXISTS \
+        db.run("CREATE TABLE IF NOT EXISTS imageComments \
         (CMT_PK INTEGER PRIMARY KEY NOT NULL, \
         MESSAGE TEXT NOT NULL, \
         USER_FK INT NOT NULL, \
@@ -130,23 +129,26 @@ function createUserFrom(thisRow)
 }
 //  Insert User Profile
 function insertUserProfile(uname, name, email, pwd) {
-    var p;
+     var p;
     p = new Promise(function (resolve, reject) {
         db.serialize(function () {
             var values = asMyQuote(uname) + ', ' + asMyQuote(name) + ', ' + asMyQuote(pwd) + ', ' + asMyQuote(email);
-            var stmt = db.prepare("INSERT INTO users (UNAME, NAME, PASSWORD, EMAIL) VALUES (" + values + ")");
-            stmt.run();
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            resolve();
+            var insertCommand = "INSERT INTO users (UNAME, NAME, PASSWORD, EMAIL) VALUES (" + values + ")"
+            db.run(insertCommand, 
+                function (err) { 
+                    if (err) 
+                    { console.log(err);
+                        reject(err);
+                    } 
+                    resolve();
+                });
+
         });
+    }).then( () => {
+            console.log("get primary key");
+            var pk = selectLastPK('USER_PK', 'users');
+            console.log(pk);
+            return (pk);
     });
     return p;
 }
@@ -362,22 +364,23 @@ function insertImage(title, bytes, user) {
     var p;
     p = new Promise(function (resolve, reject) {
         db.serialize(function () {
-            var ts = asMyQuote(new Date());
-
             var values = asMyQuote(title) + ', ' + asMyQuote(bytes) + ', ' + user + ', ' + ts;
-            var stmt = db.prepare("INSERT INTO images (IMAGE_TITLE, IMAGEBYTES, USER_FK, TS) VALUES (" + values + ")");
-            stmt.run();
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            resolve();
+            var insertCommand = "INSERT INTO images (IMAGE_TITLE, IMAGEBYTES, USER_FK, TS) VALUES (" + values + ")";
+            db.run(insertCommand, 
+                function (err) { 
+                    if (err) 
+                    { console.log(err);
+                        reject(err);
+                    } 
+                    resolve();
+                });
+
         });
+    }).then( () => {
+            console.log("get primary key");
+            var pk = selectLastPK('IMAGE_PK', 'images');
+            console.log(pk);
+            return (pk);
     });
     return p;
 }
@@ -521,19 +524,22 @@ function insertImageLike(user, image) {
         db.serialize(function () {
             var ts = asMyQuote(new Date());
             var values = user + ', ' + image + ', ' + ts;
-            var stmt = db.prepare("INSERT INTO imageLike (USER_FK, IMAGE_FK, TS) VALUES (" + values + ")");
-            stmt.run();
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            resolve();
+            var insertCommand = "INSERT INTO imageLike (USER_FK, IMAGE_FK, TS) VALUES (" + values + ")";
+            db.run(insertCommand, 
+                function (err) { 
+                    if (err) 
+                    { console.log(err);
+                        reject(err);
+                    } 
+                    resolve();
+                });
+
         });
+    }).then( () => {
+            console.log("get primary key");
+            var pk = selectLastPK('LIKE_PK', 'imageLike');
+            console.log(pk);
+            return (pk);
     });
     return p;
 }
@@ -711,19 +717,22 @@ function insertImageComment(msg, user, image) {
         db.serialize(function () {
             var ts = asMyQuote(new Date());
             var values = asMyQuote(msg) + ', ' + user + ', ' + image + ', ' + ts;
-            var stmt = db.prepare("INSERT INTO imageComments (MESSAGE, USER_FK, IMAGE_FK, TS) VALUES (" + values + ")");
-            stmt.run();
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            stmt.finalize();
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            resolve();
+            var insertCommand = "INSERT INTO imageComments (MESSAGE, USER_FK, IMAGE_FK, TS) VALUES (" + values + ")";
+            db.run(insertCommand, 
+                function (err) { 
+                    if (err) 
+                    { console.log(err);
+                        reject(err);
+                    } 
+                    resolve();
+                });
+
         });
+    }).then( () => {
+            console.log("get primary key");
+            var pk = selectLastPK('CMT_PK', 'imageComments');
+            console.log(pk);
+            return (pk);
     });
     return p;
 }
