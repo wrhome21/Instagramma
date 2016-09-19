@@ -21,13 +21,14 @@ var AddUserForm = React.createClass({
       dataType: 'json',
       type: 'POST',
       data: JSON.stringify(this.state),
+	  contentType: "application/json; charset=utf-8",
       success: function(data) {
         alert("post complete");
       }.bind(this),
       error: function(xhr, status, err) {
         //this.setState({data: comments});
 		alert("post failed");
-        console.error(this.state, status, err.toString());
+        console.error("state: " + this.state + " status: " +  status + " error: " + err.toString());
       }.bind(this)
     });
 	this.setState({userName: ''});
