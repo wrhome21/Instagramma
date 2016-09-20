@@ -35,15 +35,33 @@ app.post('/user', function (req, res) {
   console.log(req.body);
   console.log("req.body.username " + req.body.userName );
   var userName = req.body.userName;
- var p = db.insertUserProfile("", userName, "", ""); 
+ var p = db.insertUserProfile(userName, userName, "", ""); 
      p.then((val) => { 
          console.log("PK: " + val); 
-         aUser.primaryKey=val; 
-         printUser(aUser); 
+        // aUser.primaryKey=val; 
+        // printUser(aUser); 
      }).catch((err) => {console.log(err);}); 
 
   //res.send('how do i get the req value from this ajax post????');
   res.end(JSON.stringify(req.body))
+
+});
+
+app.get('/allusers', function (req, res) {
+	//db.initDB(db); this happens when requiring
+    //res.setHeader('Content-Type', 'text/plain')
+  console.log("app.get allusers");
+   var userName = req.params.userName;
+ var p = db.selectAllUserProfiles(); 
+     p.then((val) => { 
+         console.log(val); 
+        // aUser.primaryKey=val; 
+        // printUser(aUser); 
+		res.send(JSON.stringify(val))
+     }).catch((err) => {console.log(err);res.end(JSON.stringify(err))}); 
+
+  //res.send('how do i get the req value from this ajax post????');
+  //res.end(JSON.stringify(req.body))
 
 });
 
