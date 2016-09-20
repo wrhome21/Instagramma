@@ -4,16 +4,16 @@ import Gallery from './Gallery';
 import User from './User';
 import AllUsers from './AllUsers';
  
-//let urls = [
-//  '/img/cat1.jpg',
-//  '/img/cat2.jpg',
-//  '/img/cat3.jpg',
-//];
+let urls = [
+ '/img/cat1.jpg',
+ '/img/cat2.jpg',
+ '/img/cat3.jpg',
+];
  
-//ReactDOM.render(
-//  <Gallery imageUrls={urls}/>,
-//  document.getElementById('mount')
-//);s
+ReactDOM.render(
+ <Gallery imageUrls={urls}/>,
+ document.getElementById('mount')
+);
 
 //ReactDOM.render(
 //  <User name="fred" id="77"/>,
@@ -42,7 +42,7 @@ let allUsersTest =
      email: '' }
 }
 
-ReactDOM.render(
-  <AllUsers allUsers = {allUsersTest}/>,
-  document.getElementById('mount')
-);
+// ReactDOM.render(
+//   <AllUsers allUsers = {allUsersTest}/>,
+//   document.getElementById('mount')
+// );

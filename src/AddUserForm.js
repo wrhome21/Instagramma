@@ -6,7 +6,7 @@ var AddUserForm = React.createClass({
     return {userName: '', allUsers: ''};
   },
   handleUserNamerChange: function(e) {
-    this.setState({userName: e.target.value, allUsers: ''});
+    this.setState({userName: e.target.value, allUsers: this.state.allUsers});
   },
  
   handleSubmit: function(e) {
@@ -23,6 +23,7 @@ var AddUserForm = React.createClass({
 	  contentType: "application/json; charset=utf-8",
       success: function(data) {
        console.log("user name post complete");
+       
 	   
 	   /////////////////////////
 	   $.ajax({
@@ -33,7 +34,8 @@ var AddUserForm = React.createClass({
 	  contentType: "application/json; charset=utf-8",
       success: function(data) {
 		  // push all the users onto state
-		  //console.log(data);
+      console.log("here come the data");
+		  console.log(data);
 		  this.setState({userName: userName, allUsers: data});
        console.log("allusers get complete");
       }.bind(this),
@@ -43,8 +45,8 @@ var AddUserForm = React.createClass({
         console.error("allusers:: state: " + this.state + " status: " +  status + " error: " + err.toString());
       }.bind(this)
     });
-	console.log(this.state.allUsers);  
-	this.setState({allUsers: ''});
+	
+	//this.setState({allUsers: ''});
 	 
 	   
 	   ////////////////////////
@@ -55,13 +57,14 @@ var AddUserForm = React.createClass({
         console.error("user name:: state: " + this.state + " status: " +  status + " error: " + err.toString());
       }.bind(this)
     });
-	this.setState({userName: ''});
+	//this.setState({userName: ''});
 	
 	
 	
 	
   },
   render: function() {
+    console.log("render with state user " + this.state.userName + "  allUsers " + this.state.allUsers )
     return (
        <div>
 	   <form className="addUserForm" onSubmit={this.handleSubmit}>
@@ -74,8 +77,8 @@ var AddUserForm = React.createClass({
          <input type="submit" value="Post" / >
 		
        </form>
-
-      <AllUsers allusers={this.state.allUsers.name} />
+       <span> Hi {this.state.userName} ! You can look at galleries for: </span>
+      <AllUsers allUsers={this.state.allUsers} user={this.state.userName}/>
 	  </div>
 	  
     );

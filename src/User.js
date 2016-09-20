@@ -2,10 +2,19 @@ import React from 'react';
 
 var User = React.createClass({
   	
+	shouldComponentUpdate: function(nextProps, nextState){
+    // return a boolean value
+    return true;
+},
+
+	
+	
+	
 	render: function() {
 	var userStyle =  {
 		color: 'red'
-		};    
+		};   
+console.log("User rendering")		
 	  
     return (
 	
