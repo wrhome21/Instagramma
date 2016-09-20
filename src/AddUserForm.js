@@ -34,7 +34,7 @@ var AddUserForm = React.createClass({
       success: function(data) {
 		  // push all the users onto state
 		  //console.log(data);
-		  this.setState({userName: userName, allUsers: data[Object.keys(data).length ]});
+		  this.setState({userName: userName, allUsers: data});
        console.log("allusers get complete");
       }.bind(this),
       error: function(xhr, status, err) {
